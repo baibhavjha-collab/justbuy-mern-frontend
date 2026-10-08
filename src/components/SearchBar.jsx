@@ -1,0 +1,1 @@
+import {FiSearch} from 'react-icons/fi';export default function SearchBar({value,onChange,onSubmit}){return <form className="search" onSubmit={e=>{e.preventDefault();onSubmit?.()}}><FiSearch/><input value={value} onChange={e=>onChange(e.target.value)} placeholder="Search products..."/><button>Search</button></form>}

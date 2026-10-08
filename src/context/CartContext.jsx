@@ -1,0 +1,10 @@
+import {createContext,useContext,useEffect,useMemo,useState} from 'react';import api from '../api/axios';import toast from 'react-hot-toast';import {useAuth} from './AuthContext';
+const CartContext=createContext(null);
+export const CartProvider=({children})=>{const {isAuthenticated}=useAuth();const [cart,setCart]=useState({items:[]});const [loading,setLoading]=useState(false);
+const refresh=async()=>{if(!isAuthenticated){setCart({items:[]});return;}setLoading(true);try{const {data}=await api.get('/cart');setCart(data);}finally{setLoading(false);}};
+useEffect(()=>{refresh();},[isAuthenticated]);
+const add=async(productId,quantity=1)=>{try{const {data}=await api.post('/cart',{productId,quantity});setCart(data);toast.success('Added to cart');}catch(e){toast.error(e.response?.data?.message||'Could not add to cart');throw e;}};
+const update=async(productId,quantity)=>{try{const {data}=await api.put(`/cart/${productId}`,{quantity});setCart(data);}catch(e){toast.error(e.response?.data?.message||'Could not update cart');}};
+const remove=async(productId)=>{try{const {data}=await api.delete(`/cart/${productId}`);setCart(data);toast.success('Removed from cart');}catch(e){toast.error('Could not remove item');}};
+const total=useMemo(()=>cart.items.reduce((sum,i)=>sum+i.product.price*i.quantity,0),[cart]);const count=useMemo(()=>cart.items.reduce((sum,i)=>sum+i.quantity,0),[cart]);
+return <CartContext.Provider value={{cart,loading,refresh,add,update,remove,total,count}}>{children}</CartContext.Provider>};export const useCart=()=>useContext(CartContext);

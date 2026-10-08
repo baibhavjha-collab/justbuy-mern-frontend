@@ -1,0 +1,1 @@
+export default function Footer(){return <footer><div className="container footer-content"><div><strong>JustBuy</strong><p>Quality products. Simple shopping.</p></div><p>© 2026 JustBuy. All rights reserved.</p></div></footer>}
